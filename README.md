@@ -24,60 +24,62 @@ The script also includes many features that system administrators will enjoy. Su
 
 - Disable telemetry, diagnostic data, activity history, app-launch tracking & targeted ads.
 - Disable tips, tricks, suggestions and ads in start, settings, notifications, File Explorer, and on the lockscreen.
+- Disable the 'Windows Spotlight' desktop background option.
 
 #### Bing Web Search, Copilot & More
 
 - Disable & remove Bing web search & Cortana from Windows search.
-- Disable & remove Windows Copilot. (Windows 11 only)
-- Disable Windows Recall snapshots. (Windows 11 only)
+- Disable & remove Windows Copilot. (W11 only)
+- Disable Windows Recall snapshots. (W11 only)
 
 #### File Explorer
 
+- Change the default location that File Explorer opens to.
 - Show hidden files, folders and drives.
 - Show file extensions for known file types.
-- Hide the Home or Gallery section from the File Explorer navigation pane. (Windows 11 only)
-- Hide the 3D objects, music or OneDrive folder from the File Explorer navigation pane. (Windows 10 only)
+- Hide the Home or Gallery section from the File Explorer navigation pane. (W11 only)
+- Hide the 3D objects, music or OneDrive folder from the File Explorer navigation pane. (W10 only)
 - Hide duplicate removable drive entries from the File Explorer navigation pane, so only the entry under 'This PC' remains.
 
-#### Taskbar
+#### Taskbar & Start
 
-- Align taskbar icons to the left. (Windows 11 only)
-- Hide or change the search icon/box on the taskbar. (Windows 11 only)
-- Hide the taskview button from the taskbar. (Windows 11 only)
+- Align taskbar icons to the left. (W11 only)
+- Hide or change the search icon/box on the taskbar. (W11 only)
+- Hide the taskview button from the taskbar. (W11 only)
 - Disable the widgets service & hide icon from the taskbar.
 - Hide the chat (meet now) icon from the taskbar.
+- Disable & hide the recommended section in the start menu. (W11 only)
 
 #### Context Menu
 
-- Restore the old Windows 10 style context menu. (Windows 11 only)
-- Hide the 'Include in library', 'Give access to' and 'Share' options from the context menu. (Windows 10 only)
+- Restore the old Windows 10 style context menu. (W11 only)
+- Hide the 'Include in library', 'Give access to' and 'Share' options from the context menu. (W10 only)
 
 #### Other
 
-- Disable Xbox game/screen recording. (Also stops gaming overlay popups)
-- Sysprep mode to apply changes to the Windows Default user profile.
+- Disable Xbox game/screen recording, this also stops gaming overlay popups.
+- Turn off Enhance Pointer Precision, also known as mouse acceleration.
+- Sysprep mode to apply changes to the Windows Default user profile. Afterwards, all new users will have the changes automatically applied to them.
 
-## Default Mode
+### Default Settings
 
-The default mode applies the changes that are recommended for most users, expand the section below for more info.
+The script allows you to select exactly what changes you want to make, but it also provides a 1-click default mode. The default mode allows you to quickly and easily apply the changes that are recommended for most users. Expand the section below for more info.
 
 <details>
   <summary>Click to expand</summary>
-  <blockquote>
-    
-    Default mode applies the following changes:
-    - Remove the default selection of bloatware apps. (See below for full list)
-    - Disable telemetry, diagnostic data, activity history, app-launch tracking & targeted ads.
-    - Disable tips, tricks, suggestions and ads in start, settings, notifications, File Explorer, and on the lockscreen.
-    - Disable & remove Bing web search & Cortana from Windows search.
-    - Disable Windows Copilot. (Windows 11 only)
-    - Show file extensions for known file types.
-    - Hide the 3D objects folder under 'This pc' from File Explorer. (Windows 10 only)
-    - Disable the widget service & hide the icon from the taskbar.
-    - Hide the Chat (meet now) icon from the taskbar.
-  </blockquote>
+  
+  #### Default mode applies the following changes:
+  - Remove the default selection of bloatware apps. (See below for full list)
+  - Disable telemetry, diagnostic data, activity history, app-launch tracking & targeted ads.
+  - Disable tips, tricks, suggestions and ads in start, settings, notifications, File Explorer, and on the lockscreen.
+  - Disable & remove Bing web search & Cortana from Windows search.
+  - Disable Windows Copilot. (Windows 11 only)
+  - Show file extensions for known file types.
+  - Hide the 3D objects folder under 'This pc' from File Explorer. (Windows 10 only)
+  - Disable the widget service & hide the icon from the taskbar.
+  - Hide the Chat (meet now) icon from the taskbar.
 
-  #### Apps that ARE removed by default
+  #### Apps that ARE removed as part of the default mode
   
   <details>
     <summary>Click to expand</summary>
@@ -179,7 +181,7 @@ The default mode applies the changes that are recommended for most users, expand
   </blockquote>
   </details>
   
-  #### Apps that are NOT removed by default
+  #### Apps that are NOT removed as part of the default mode
   
   <details>
     <summary>Click to expand</summary>
@@ -198,6 +200,7 @@ The default mode applies the changes that are recommended for most users, expand
       - Microsoft.Windows.Photos
       - Microsoft.WindowsCalculator
       - Microsoft.WindowsCamera
+      - Microsoft.WindowsNotepad
       - Microsoft.windowscommunicationsapps* (Mail & Calendar)
       - Microsoft.WindowsStore (Microsoft Store, NOTE: This app cannot be reinstalled!)
       - Microsoft.WindowsTerminal (New default terminal app in Windows 11)
@@ -230,13 +233,13 @@ The default mode applies the changes that are recommended for most users, expand
 
 ### Quick method
 
-Download & run the script automatically via PowerShell. All traces of the script are removed automatically after execution.
+Download & run the script automatically via PowerShell. All files related to the script are saved to `%temp%/Win11Debloat` if you wish to inspect them. The script automatically cleans up the files after execution.
 
-1. Open PowerShell as an administrator.
+1. Open PowerShell, preferably as an administrator.
 2. Copy and paste the code below into PowerShell, press enter to run the script:
 
 ```PowerShell
-& ([scriptblock]::Create((irm "https://win11debloat.raphi.re/")))
+& ([scriptblock]::Create((irm "https://debloat.raphi.re/")))
 ```
 
 3. Wait for the script to automatically download Win11Debloat.
@@ -246,7 +249,7 @@ Download & run the script automatically via PowerShell. All traces of the script
 This method supports [parameters](#parameters). To use parameters simply run the script as explained above, but add the parameters at the end with spaces in between. Example:
 
 ```PowerShell
-& ([scriptblock]::Create((irm "https://win11debloat.raphi.re/"))) -RunDefaults -Silent
+& ([scriptblock]::Create((irm "https://debloat.raphi.re/"))) -RunDefaults -Silent
 ```
 
 ### Traditional method
@@ -262,7 +265,7 @@ Manually download & run the script.
 
 ### Advanced method
 
-Manually download the script & run the script via PowerShell. Only recommended for advanced users.
+Manually download the script & run the script via PowerShell. Recommended for advanced users.
 
 1. [Download the latest version of the script](https://github.com/Raphire/Win11Debloat/archive/master.zip), and extract the .ZIP file to your desired location.
 2. Open PowerShell as an administrator.
@@ -279,7 +282,7 @@ Set-ExecutionPolicy Unrestricted -Scope Process
 .\Win11Debloat.ps1
 ```
 
-6. The Win11Debloat menu will now open. Select either the default or custom setup to continue.
+6. The Win11Debloat menu will now open. Select either the default or custom mode to continue.
 7. Carefully read through and follow the on-screen instructions.
 
 This method supports [parameters](#parameters). To use parameters simply run the script as explained above, but add the parameters at the end with spaces in between. Example:
@@ -294,43 +297,51 @@ The quick and advanced usage methods support switch parameters. A table of all t
 
 | Parameter | Description |
 | :-------: | ----------- |
-| -Silent                            |    Suppresses all interactive prompts, so the script will run without requiring any user input. |
-| -Sysprep                           |    Run the script in Sysprep mode. All changes will be applied to the Windows default user profile and will only affect new user accounts. |
-| -RunDefaults                       |    Run the script with the default settings. |
-| -RemoveApps                        |    Remove the default selection of bloatware apps. |
-| -RemoveAppsCustom                  |    Remove all apps specified in the 'CustomAppsList' file. IMPORTANT: You can generate your custom list by running the script with the `-RunAppConfigurator` parameter. No apps will be removed if this file does not exist! |
-| -RunAppConfigurator                |    Run the app configurator to generate a list of apps to remove, the list is saved to the 'CustomAppsList' file. Running the script with the `-RemoveAppsCustom` parameter will remove the selected apps. |
-| -RemoveCommApps                    |    Remove the Mail, Calendar, and People apps. |
-| -RemoveW11Outlook                  |    Remove the new Outlook for Windows app. |
-| -RemoveDevApps                     |    Remove developer-related apps such as Remote Desktop, DevHome and Power Automate. |
-| -RemoveGamingApps                  |    Remove the Xbox App and Xbox Gamebar. |
-| -ForceRemoveEdge                   |    Forcefully remove Microsoft Edge, this option leaves Core, WebView and Update components installed for compatibility. NOT RECOMMENDED! |
-| -DisableDVR                        |    Disable Xbox game/screen recording feature & stop gaming overlay popups. |
-| -ClearStart                        |    Remove all pinned apps from start for the current user (Windows 11 update 22H2 or later only) |
-| -ClearStartAllUsers                |    Remove all pinned apps from start for all existing and new users. (Windows 11 update 22H2 or later only) |
-| -DisableTelemetry                  |    Disable telemetry, diagnostic data & targeted ads. |
-| -DisableBing                       |    Disable & remove Bing web search, Bing AI & Cortana in Windows search. |
-| -DisableSuggestions                |    Disable tips, tricks, suggestions and ads in start, settings, notifications and File Explorer. |
-| <pre>-DisableLockscreenTips</pre>  |    Disable tips & tricks on the lockscreen. |
-| -RevertContextMenu                 |    Restore the old Windows 10 style context menu. (Windows 11 only) |
-| -ShowHiddenFolders                 |    Show hidden files, folders and drives. |
-| -ShowKnownFileExt                  |    Show file extensions for known file types. |
-| -HideDupliDrive                    |    Hide duplicate removable drive entries from the File Explorer navigation pane, so only the entry under 'This PC' remains. |
-| -TaskbarAlignLeft                  |    Align taskbar icons to the left. (Windows 11 only) |
-| -HideSearchTb                      |    Hide search icon from the taskbar. (Windows 11 only) |
-| -ShowSearchIconTb                  |    Show search icon on the taskbar. (Windows 11 only) |
-| -ShowSearchLabelTb                 |    Show search icon with label on the taskbar. (Windows 11 only) |
-| -ShowSearchBoxTb                   |    Show search box on the taskbar. (Windows 11 only) |
-| -HideTaskview                      |    Hide the taskview button from the taskbar. (Windows 11 only) |
-| -HideChat                          |    Hide the chat (meet now) icon from the taskbar. |
-| -DisableWidgets                    |    Disable the widget service & hide the widget (news and interests) icon from the taskbar. |
-| -DisableCopilot                    |    Disable and remove Windows Copilot. (Windows 11 only) |
-| -DisableRecall                     |    Disable Windows Recall snapshots. (Windows 11 only) |
-| -HideHome                          |    Hide the home section from the File Explorer navigation pane and add a toggle in the File Explorer folder options. (Windows 11 only) |
-| -HideGallery                       |    Hide the gallery section from the File Explorer navigation pane and add a toggle in the File Explorer folder options. (Windows 11 only) |
-| -HideOnedrive                      |    Hide the OneDrive folder from the File Explorer navigation pane. (Windows 10 only) |
-| -Hide3dObjects                     |    Hide the 3D objects folder under 'This pc' in File Explorer. (Windows 10 only) |
-| -HideMusic                         |    Hide the music folder under 'This pc' in File Explorer. (Windows 10 only) |
-| -HideIncludeInLibrary              |    Hide the 'Include in library' option in the context menu. (Windows 10 only) |
-| -HideGiveAccessTo                  |    Hide the 'Give access to' option in the context menu. (Windows 10 only) |
-| -HideShare                         |    Hide the 'Share' option in the context menu. (Windows 10 only) |
+| -Silent                             |    Suppresses all interactive prompts, so the script will run without requiring any user input. |
+| -Sysprep                            |    Run the script in Sysprep mode. All changes will be applied to the Windows default user profile and will only affect new user accounts. |
+| -RunDefaults                        |    Run the script with the default settings. |
+| -RunSavedSettings                   |    Run the script with the saved custom settings from last time. These settings are saved to and read from the `SavedSettings` file in the root folder of the script. |
+| -RemoveApps                         |    Remove the default selection of bloatware apps. |
+| -RemoveAppsCustom                   |    Remove all apps specified in the 'CustomAppsList' file. IMPORTANT: You can generate your custom list by running the script with the `-RunAppConfigurator` parameter. No apps will be removed if this file does not exist! |
+| -RunAppConfigurator                 |    Run the app configurator to generate a list of apps to remove, the list is saved to the 'CustomAppsList' file. Running the script with the `-RemoveAppsCustom` parameter will remove the selected apps. |
+| -RemoveCommApps                     |    Remove the Mail, Calendar, and People apps. |
+| -RemoveW11Outlook                   |    Remove the new Outlook for Windows app. |
+| -RemoveDevApps                      |    Remove developer-related apps such as Remote Desktop, DevHome and Power Automate. |
+| -RemoveGamingApps                   |    Remove the Xbox App and Xbox Gamebar. |
+| -ForceRemoveEdge                    |    Forcefully remove Microsoft Edge, this option leaves Core, WebView and Update components installed for compatibility. NOT RECOMMENDED! |
+| -DisableDVR                         |    Disable Xbox game/screen recording feature & stop gaming overlay popups. |
+| -ClearStart                         |    Remove all pinned apps from start for the current user (Windows 11 update 22H2 or later only) |
+| -ClearStartAllUsers                 |    Remove all pinned apps from start for all existing and new users. (Windows 11 update 22H2 or later only) |
+| -DisableTelemetry                   |    Disable telemetry, diagnostic data & targeted ads. |
+| -DisableSuggestions                 |    Disable tips, tricks, suggestions and ads in start, settings, notifications and File Explorer. |
+| -DisableDesktopSpotlight            |    Disable the 'Windows Spotlight' desktop background option. |
+| -DisableLockscreenTips              |    Disable tips & tricks on the lockscreen. |
+| -DisableBing                        |    Disable & remove Bing web search, Bing AI & Cortana in Windows search. |
+| -DisableCopilot                     |    Disable and remove Windows Copilot. (Windows 11 only) |
+| -DisableRecall                      |    Disable Windows Recall snapshots. (Windows 11 only) |
+| -RevertContextMenu                  |    Restore the old Windows 10 style context menu. (Windows 11 only) |
+| -DisableMouseAcceleration           |    Turn off Enhance Pointer Precision, also known as mouse acceleration. Requires reboot to apply. |
+| -ShowHiddenFolders                  |    Show hidden files, folders and drives. |
+| -ShowKnownFileExt                   |    Show file extensions for known file types. |
+| -HideDupliDrive                     |    Hide duplicate removable drive entries from the File Explorer navigation pane, so only the entry under 'This PC' remains. |
+| -TaskbarAlignLeft                   |    Align taskbar icons to the left. (Windows 11 only) |
+| -HideSearchTb                       |    Hide search icon from the taskbar. (Windows 11 only) |
+| -ShowSearchIconTb                   |    Show search icon on the taskbar. (Windows 11 only) |
+| -ShowSearchLabelTb                  |    Show search icon with label on the taskbar. (Windows 11 only) |
+| -ShowSearchBoxTb                    |    Show search box on the taskbar. (Windows 11 only) |
+| -HideTaskview                       |    Hide the taskview button from the taskbar. (Windows 11 only) |
+| -HideChat                           |    Hide the chat (meet now) icon from the taskbar. |
+| -DisableWidgets                     |    Disable the widget service & hide the widget (news and interests) icon from the taskbar. |
+| <pre>-DisableStartRecommended</pre> |    Disable & hide the recommended section in the start menu. This will also change the start menu layout to `More pins`. |
+| -HideHome                           |    Hide the home section from the File Explorer navigation pane and add a toggle in the File Explorer folder options. (Windows 11 only) |
+| -HideGallery                        |    Hide the gallery section from the File Explorer navigation pane and add a toggle in the File Explorer folder options. (Windows 11 only) |
+| -ExplorerToHome                     |    Changes the page that File Explorer opens to `Home`. |
+| -ExplorerToThisPC                   |    Changes the page that File Explorer opens to `This PC`. |
+| -ExplorerToDownloads                |    Changes the page that File Explorer opens to `Downloads`. |
+| -ExplorerToOneDrive                 |    Changes the page that File Explorer opens to `OneDrive`. |
+| -HideOnedrive                       |    Hide the OneDrive folder from the File Explorer navigation pane. (Windows 10 only) |
+| -Hide3dObjects                      |    Hide the 3D objects folder under 'This pc' in File Explorer. (Windows 10 only) |
+| -HideMusic                          |    Hide the music folder under 'This pc' in File Explorer. (Windows 10 only) |
+| -HideIncludeInLibrary               |    Hide the 'Include in library' option in the context menu. (Windows 10 only) |
+| -HideGiveAccessTo                   |    Hide the 'Give access to' option in the context menu. (Windows 10 only) |
+| -HideShare                          |    Hide the 'Share' option in the context menu. (Windows 10 only) |
