@@ -76,7 +76,7 @@ function ShowAppSelectionForm {
     $checkUncheckCheckBox = New-Object System.Windows.Forms.CheckBox
     $initialFormWindowState = New-Object System.Windows.Forms.FormWindowState
 
-    $global:selectionBoxIndex = -1
+    $script:selectionBoxIndex = -1
 
     # saveButton eventHandler
     $handler_saveButton_Click= 
@@ -110,15 +110,15 @@ function ShowAppSelectionForm {
 
     $selectionBox_SelectedIndexChanged= 
     {
-        $global:selectionBoxIndex = $selectionBox.SelectedIndex
+        $script:selectionBoxIndex = $selectionBox.SelectedIndex
     }
 
     $selectionBox_MouseDown=
     {
         if ($_.Button -eq [System.Windows.Forms.MouseButtons]::Left) {
             if ([System.Windows.Forms.Control]::ModifierKeys -eq [System.Windows.Forms.Keys]::Shift) {
-                if ($global:selectionBoxIndex -ne -1) {
-                    $topIndex = $global:selectionBoxIndex
+                if ($script:selectionBoxIndex -ne -1) {
+                    $topIndex = $script:selectionBoxIndex
 
                     if ($selectionBox.SelectedIndex -gt $topIndex) {
                         for (($i = ($topIndex)); $i -le $selectionBox.SelectedIndex; $i++){
@@ -132,7 +132,7 @@ function ShowAppSelectionForm {
                     }
                 }
             }
-            elseif ($global:selectionBoxIndex -ne $selectionBox.SelectedIndex) {
+            elseif ($script:selectionBoxIndex -ne $selectionBox.SelectedIndex) {
                 $selectionBox.SetItemChecked($selectionBox.SelectedIndex, -not $selectionBox.GetItemChecked($selectionBox.SelectedIndex))
             }
         }
@@ -151,7 +151,7 @@ function ShowAppSelectionForm {
         $form.WindowState = $initialFormWindowState
 
         # Reset state to default before loading appslist again
-        $global:selectionBoxIndex = -1
+        $script:selectionBoxIndex = -1
         $checkUncheckCheckBox.Checked = $False
 
         # Show loading indicator
@@ -353,7 +353,7 @@ function RemoveApps {
             }
             else {
                 # Uninstall app via winget
-                Strip-Progress -ScriptBlock { winget uninstall --accept-source-agreements --disable-interactivity --id $app } | Tee-Object -Variable wingetOutput 
+                Remove-Progress -ScriptBlock { winget uninstall --accept-source-agreements --disable-interactivity --id $app } | Tee-Object -Variable wingetOutput 
 
                 If (($app -eq "Microsoft.Edge") -and (Select-String -InputObject $wingetOutput -Pattern "Uninstall failed with exit code")) {
                     Write-Host "Unable to uninstall Microsoft Edge via Winget" -ForegroundColor Red
@@ -492,8 +492,30 @@ function ForceRemoveEdge {
 }
 
 
+<#
+.SYNOPSIS
+Removes progress spinners and bars from the console output of a provided script block.
+
+.DESCRIPTION
+The Remove-Progress function executes a provided script block and processes its output to remove any progress spinners, bars, and size formatting patterns. This is useful for cleaning up console output for better readability.
+
+.PARAMETER ScriptBlock
+The script block to be executed and processed. This parameter is mandatory.
+
+.EXAMPLE
+$script = { Write-Output "Processing..."; Start-Sleep -Seconds 2; Write-Output "Done." }
+Remove-Progress -ScriptBlock $script
+
+This example executes a script block that outputs "Processing...", waits for 2 seconds, and then outputs "Done." The Remove-Progress function will process this output to remove any progress indicators.
+
+.NOTES
+The function uses regular expressions to identify and remove progress spinners, bars, and size formatting patterns from the console output. It also ensures that non-empty and non-whitespace lines are returned.
+
+.AUTHOR
+Your Name
+#>
 # Execute provided command and strips progress spinners/bars from console output
-function Strip-Progress {
+function Remove-Progress {
     param(
         [ScriptBlock]$ScriptBlock
     )
