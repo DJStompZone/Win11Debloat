@@ -47,6 +47,8 @@ param (
     [switch]$DisableShare, [switch]$HideShare
 )
 
+$global:rootPath = $PSScriptRoot
+
 # Import modules
 Import-Module "$PSScriptRoot/Modules/AppRemoval.psm1"
 Import-Module "$PSScriptRoot/Modules/RegistryOperations.psm1"
@@ -119,44 +121,46 @@ if ($RunAppConfigurator) {
 
 switch ($global:Params.Keys) {
     'RemoveApps' {
-        $appsList = ReadAppslistFromFile "$PSScriptRoot/Appslist.txt" 
+        $appsList = ReadAppslistFromFile "$rootPath/Appslist.txt" 
         Write-Output "> Removing default selection of $($appsList.Count) apps..."
-        RemoveApps $appsList
+        RemoveApps -appsList $appsList -wingetInstalled $global:wingetInstalled -winVersion $WinVersion
         continue
     }
     'RemoveAppsCustom' {
-        if (-not (Test-Path "$PSScriptRoot/CustomAppsList")) {
+        if (-not (Test-Path "$rootPath/CustomAppsList")) {
             Write-Host "> Error: Could not load custom apps list from file, no apps were removed" -ForegroundColor Red
             Write-Output ""
             continue
         }
-        $appsList = ReadAppslistFromFile "$PSScriptRoot/CustomAppsList"
+        
+        $appsList = ReadAppslistFromFile "$rootPath/CustomAppsList"
         Write-Output "> Removing $($appsList.Count) apps..."
-        RemoveApps $appsList
+        RemoveApps -appsList $appsList -wingetInstalled $global:wingetInstalled -winVersion $WinVersion
         continue
     }
     'RemoveCommApps' {
         Write-Output "> Removing Mail, Calendar and People apps..."
+        
         $appsList = 'Microsoft.windowscommunicationsapps', 'Microsoft.People'
-        RemoveApps $appsList
+        RemoveApps -appsList $appsList -wingetInstalled $global:wingetInstalled -winVersion $WinVersion
         continue
     }
     'RemoveW11Outlook' {
         $appsList = 'Microsoft.OutlookForWindows'
         Write-Output "> Removing new Outlook for Windows app..."
-        RemoveApps $appsList
+        RemoveApps -appsList $appsList -wingetInstalled $global:wingetInstalled -winVersion $WinVersion
         continue
     }
     'RemoveDevApps' {
         $appsList = 'Microsoft.PowerAutomateDesktop', 'Microsoft.RemoteDesktop', 'Windows.DevHome'
         Write-Output "> Removing developer-related related apps..."
-        RemoveApps $appsList
+        RemoveApps -appsList $appsList -wingetInstalled $global:wingetInstalled -winVersion $WinVersion
         continue
     }
     'RemoveGamingApps' {
         $appsList = 'Microsoft.GamingApp', 'Microsoft.XboxGameOverlay', 'Microsoft.XboxGamingOverlay'
         Write-Output "> Removing gaming related apps..."
-        RemoveApps $appsList
+        RemoveApps -appsList $appsList -wingetInstalled $global:wingetInstalled -winVersion $WinVersion
         continue
     }
     "ForceRemoveEdge" {
@@ -164,47 +168,51 @@ switch ($global:Params.Keys) {
         continue
     }
     'DisableDVR' {
-        RegImport "> Disabling Xbox game/screen recording..." "Disable_DVR.reg"
+        RegImport -message "> Disabling Xbox game/screen recording..." -path "Disable_DVR.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'DisableTelemetry' {
-        RegImport "> Disabling telemetry, diagnostic data, activity history, app-launch tracking and targeted ads..." "Disable_Telemetry.reg"
+        RegImport -message "> Disabling telemetry, diagnostic data, activity history, app-launch tracking and targeted ads..." -path "Disable_Telemetry.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "DisableSuggestions", "DisableWindowsSuggestions"} {
-        RegImport "> Disabling tips, tricks, suggestions and ads across Windows..." "Disable_Windows_Suggestions.reg"
+        RegImport -message "> Disabling tips, tricks, suggestions and ads across Windows..." -path "Disable_Windows_Suggestions.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'DisableDesktopSpotlight' {
-        RegImport "> Disabling the 'Windows Spotlight' desktop background option..." "Disable_Desktop_Spotlight.reg"
+        RegImport -message "> Disabling the 'Windows Spotlight' desktop background option..." -path "Disable_Desktop_Spotlight.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "DisableLockscrTips", "DisableLockscreenTips"} {
-        RegImport "> Disabling tips & tricks on the lockscreen..." "Disable_Lockscreen_Tips.reg"
+        RegImport -message "> Disabling tips & tricks on the lockscreen..." -path "Disable_Lockscreen_Tips.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "DisableBingSearches", "DisableBing"} {
-        RegImport "> Disabling bing web search, bing AI & cortana in Windows search..." "Disable_Bing_Cortana_In_Search.reg"
+        RegImport -message "> Disabling bing web search, bing AI & cortana in Windows search..." -path "Disable_Bing_Cortana_In_Search.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
+        
+        # Also remove the app package for bing search
         $appsList = 'Microsoft.BingSearch'
-        RemoveApps $appsList
+        RemoveApps -appsList $appsList -wingetInstalled $global:wingetInstalled -winVersion $WinVersion
         continue
     }
     'DisableCopilot' {
-        RegImport "> Disabling & removing Windows Copilot..." "Disable_Copilot.reg"
+        RegImport -message "> Disabling & removing Windows Copilot..." -path "Disable_Copilot.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
+
+        # Also remove the app package for bing search
         $appsList = 'Microsoft.Copilot'
-        RemoveApps $appsList
+        RemoveApps -appsList $appsList -wingetInstalled $global:wingetInstalled -winVersion $WinVersion
         continue
     }
     'DisableRecall' {
-        RegImport "> Disabling Windows Recall snapshots..." "Disable_AI_Recall.reg"
+        RegImport -message "> Disabling Windows Recall snapshots..." -path "Disable_AI_Recall.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'RevertContextMenu' {
-        RegImport "> Restoring the old Windows 10 style context menu..." "Disable_Show_More_Options_Context_Menu.reg"
+        RegImport -message "> Restoring the old Windows 10 style context menu..." -path "Disable_Show_More_Options_Context_Menu.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'DisableMouseAcceleration' {
-        RegImport "> Turning off Enhanced Pointer Precision..." "Disable_Enhance_Pointer_Precision.reg"
+        RegImport -message "> Turning off Enhanced Pointer Precision..." -path "Disable_Enhance_Pointer_Precision.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'ClearStart' {
@@ -218,99 +226,99 @@ switch ($global:Params.Keys) {
         continue
     }
     'DisableStartRecommended' {
-        RegImport "> Disabling and hiding the start menu recommended section..." "Disable_Start_Recommended.reg"
+        RegImport -message "> Disabling and hiding the start menu recommended section..." -path "Disable_Start_Recommended.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'TaskbarAlignLeft' {
-        RegImport "> Aligning taskbar buttons to the left..." "Align_Taskbar_Left.reg"
+        RegImport -message "> Aligning taskbar buttons to the left..." -path "Align_Taskbar_Left.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'HideSearchTb' {
-        RegImport "> Hiding the search icon from the taskbar..." "Hide_Search_Taskbar.reg"
+        RegImport -message "> Hiding the search icon from the taskbar..." -path "Hide_Search_Taskbar.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'ShowSearchIconTb' {
-        RegImport "> Changing taskbar search to icon only..." "Show_Search_Icon.reg"
+        RegImport -message "> Changing taskbar search to icon only..." -path "Show_Search_Icon.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'ShowSearchLabelTb' {
-        RegImport "> Changing taskbar search to icon with label..." "Show_Search_Icon_And_Label.reg"
+        RegImport -message "> Changing taskbar search to icon with label..." -path "Show_Search_Icon_And_Label.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'ShowSearchBoxTb' {
-        RegImport "> Changing taskbar search to search box..." "Show_Search_Box.reg"
+        RegImport -message "> Changing taskbar search to search box..." -path "Show_Search_Box.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'HideTaskview' {
-        RegImport "> Hiding the taskview button from the taskbar..." "Hide_Taskview_Taskbar.reg"
+        RegImport -message "> Hiding the taskview button from the taskbar..." -path "Hide_Taskview_Taskbar.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "HideWidgets", "DisableWidgets"} {
-        RegImport "> Disabling the widget service and hiding the widget icon from the taskbar..." "Disable_Widgets_Taskbar.reg"
+        RegImport -message "> Disabling the widget service and hiding the widget icon from the taskbar..." -path "Disable_Widgets_Taskbar.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "HideChat", "DisableChat"} {
-        RegImport "> Hiding the chat icon from the taskbar..." "Disable_Chat_Taskbar.reg"
+        RegImport -message "> Hiding the chat icon from the taskbar..." -path "Disable_Chat_Taskbar.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'ExplorerToHome' {
-        RegImport "> Changing the default location that File Explorer opens to `Home`..." "Launch_File_Explorer_To_Home.reg"
+        RegImport -message "> Changing the default location that File Explorer opens to `Home`..." -path "Launch_File_Explorer_To_Home.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'ExplorerToThisPC' {
-        RegImport "> Changing the default location that File Explorer opens to `This PC`..." "Launch_File_Explorer_To_This_PC.reg"
+        RegImport -message "> Changing the default location that File Explorer opens to `This PC`..." -path "Launch_File_Explorer_To_This_PC.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'ExplorerToDownloads' {
-        RegImport "> Changing the default location that File Explorer opens to `Downloads`..." "Launch_File_Explorer_To_Downloads.reg"
+        RegImport -message "> Changing the default location that File Explorer opens to `Downloads`..." -path "Launch_File_Explorer_To_Downloads.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'ExplorerToOneDrive' {
-        RegImport "> Changing the default location that File Explorer opens to `OneDrive`..." "Launch_File_Explorer_To_OneDrive.reg"
+        RegImport -message "> Changing the default location that File Explorer opens to `OneDrive`..." -path "Launch_File_Explorer_To_OneDrive.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'ShowHiddenFolders' {
-        RegImport "> Unhiding hidden files, folders and drives..." "Show_Hidden_Folders.reg"
+        RegImport -message "> Unhiding hidden files, folders and drives..." -path "Show_Hidden_Folders.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'ShowKnownFileExt' {
-        RegImport "> Enabling file extensions for known file types..." "Show_Extensions_For_Known_File_Types.reg"
+        RegImport -message "> Enabling file extensions for known file types..." -path "Show_Extensions_For_Known_File_Types.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'HideHome' {
-        RegImport "> Hiding the home section from the File Explorer navigation pane..." "Hide_Home_from_Explorer.reg"
+        RegImport -message "> Hiding the home section from the File Explorer navigation pane..." -path "Hide_Home_from_Explorer.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'HideGallery' {
-        RegImport "> Hiding the gallery section from the File Explorer navigation pane..." "Hide_Gallery_from_Explorer.reg"
+        RegImport -message "> Hiding the gallery section from the File Explorer navigation pane..." -path "Hide_Gallery_from_Explorer.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     'HideDupliDrive' {
-        RegImport "> Hiding duplicate removable drive entries from the File Explorer navigation pane..." "Hide_duplicate_removable_drives_from_navigation_pane_of_File_Explorer.reg"
+        RegImport -message "> Hiding duplicate removable drive entries from the File Explorer navigation pane..." -path "Hide_duplicate_removable_drives_from_navigation_pane_of_File_Explorer.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "HideOnedrive", "DisableOnedrive"} {
-        RegImport "> Hiding the OneDrive folder from the File Explorer navigation pane..." "Hide_Onedrive_Folder.reg"
+        RegImport -message "> Hiding the OneDrive folder from the File Explorer navigation pane..." -path "Hide_Onedrive_Folder.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "Hide3dObjects", "Disable3dObjects"} {
-        RegImport "> Hiding the 3D objects folder from the File Explorer navigation pane..." "Hide_3D_Objects_Folder.reg"
+        RegImport -message "> Hiding the 3D objects folder from the File Explorer navigation pane..." -path "Hide_3D_Objects_Folder.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "HideMusic", "DisableMusic"} {
-        RegImport "> Hiding the music folder from the File Explorer navigation pane..." "Hide_Music_folder.reg"
+        RegImport -message "> Hiding the music folder from the File Explorer navigation pane..." -path "Hide_Music_folder.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "HideIncludeInLibrary", "DisableIncludeInLibrary"} {
-        RegImport "> Hiding 'Include in library' in the context menu..." "Disable_Include_in_library_from_context_menu.reg"
+        RegImport -message "> Hiding 'Include in library' in the context menu..." -path "Disable_Include_in_library_from_context_menu.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "HideGiveAccessTo", "DisableGiveAccessTo"} {
-        RegImport "> Hiding 'Give access to' in the context menu..." "Disable_Give_access_to_context_menu.reg"
+        RegImport -message "> Hiding 'Give access to' in the context menu..." -path "Disable_Give_access_to_context_menu.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
     {$_ -in "HideShare", "DisableShare"} {
-        RegImport "> Hiding 'Share' in the context menu..." "Disable_Share_from_context_menu.reg"
+        RegImport -message "> Hiding 'Share' in the context menu..." -path "Disable_Share_from_context_menu.reg" -sysprep $global:Params.ContainsKey("Sysprep") -rootPath $rootPath
         continue
     }
 }
