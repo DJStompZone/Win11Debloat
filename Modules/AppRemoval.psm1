@@ -16,12 +16,14 @@ function ReadAppslistFromFile {
 
 function RemoveApps {
     param (
-        $appslist
+        $appsList,
+        $wingetInstalled,
+        $winVersion
     )
     Foreach ($app in $appsList) { 
         Write-Output "Attempting to remove $app..."
         if (($app -eq "Microsoft.OneDrive") -or ($app -eq "Microsoft.Edge")) {
-            if ($global:wingetInstalled -eq $false) {
+            if (-not $wingetInstalled) {
                 Write-Host "Error: WinGet is either not installed or is outdated, $app could not be removed" -ForegroundColor Red
             } else {
                 Remove-Progress -ScriptBlock { winget uninstall --accept-source-agreements --disable-interactivity --id $app } | Tee-Object -Variable wingetOutput 
@@ -36,7 +38,7 @@ function RemoveApps {
             }
         } else {
             $app = '*' + $app + '*'
-            if ($WinVersion -ge 22000){
+            if ($winVersion -ge 22000){
                 try {
                     Get-AppxPackage -Name $app -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction Continue
                     if($DebugPreference -ne "SilentlyContinue") {

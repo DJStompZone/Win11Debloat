@@ -1,6 +1,6 @@
 function ReplaceStartMenuForAllUsers {
     param (
-        $startMenuTemplate = "$PSScriptRoot/Start/start2.bin"
+        $startMenuTemplate = "$global:rootPath/Start/start2.bin"
     )
     Write-Output "> Removing all pinned apps from the start menu for all users..."
     if (-not (Test-Path $startMenuTemplate)) {
@@ -26,7 +26,7 @@ function ReplaceStartMenuForAllUsers {
 function ReplaceStartMenu {
     param (
         $startMenuBinFile = "$env:LOCALAPPDATA\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState\start2.bin",
-        $startMenuTemplate = "$PSScriptRoot/Start/start2.bin"
+        $startMenuTemplate = "$global:rootPath/Start/start2.bin"
     )
     $userName = $env:USERNAME
     if (-not (Test-Path $startMenuTemplate)) {

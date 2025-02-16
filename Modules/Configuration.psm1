@@ -6,14 +6,14 @@ function AddParameter {
     if (-not $global:Params.ContainsKey($parameterName)) {
         $global:Params.Add($parameterName, $true)
     }
-    if (!(Test-Path "$PSScriptRoot/SavedSettings")) {
-        $null = New-Item "$PSScriptRoot/SavedSettings"
+    if (!(Test-Path "$global:rootPath/SavedSettings")) {
+        $null = New-Item "$global:rootPath/SavedSettings"
     } elseif ($global:FirstSelection) {
-        $null = Clear-Content "$PSScriptRoot/SavedSettings"
+        $null = Clear-Content "$global:rootPath/SavedSettings"
     }
     $global:FirstSelection = $false
     $entry = "$parameterName#- $message"
-    Add-Content -Path "$PSScriptRoot/SavedSettings" -Value $entry
+    Add-Content -Path "$global:rootPath/SavedSettings" -Value $entry
 }
 
 function DisplayCustomModeOptions {

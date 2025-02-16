@@ -1,26 +1,44 @@
 function RegImport {
     param (
         $message,
-        $path
+        $path,
+        $sysprep,
+        $rootPath
     )
     Write-Output $message
-    if (!$global:Params.ContainsKey("Sysprep")) {
-        reg import "$PSScriptRoot\Regfiles\$path"  
+    # Write-Debug "`$rootPath = $rootPath"
+    # Write-Debug "`$path = $path"
+    # Write-Debug "`$sysprep = $sysprep"
+    # Write-Debug ""
+    $PathActuallyExists = Test-Path "$rootPath\Regfiles\$path"
+    if (-not $PathActuallyExists) {
+        Write-Warning "Registry file $path does not exist!"
+    }
+    $RootPathActuallyExists = Test-Path $rootPath
+    if (-not $RootPathActuallyExists) {
+        Write-Warning "Root path $rootPath does not exist!"
+    }
+    if (-not $sysprep) {
+        reg import "$rootPath\Regfiles\$path"  
     } else {
         $defaultUserPath = $env:USERPROFILE -Replace ('\\' + $env:USERNAME + '$'), '\Default\NTUSER.DAT'
         reg load "HKU\Default" $defaultUserPath | Out-Null
-        reg import "$PSScriptRoot\Regfiles\Sysprep\$path"  
+        reg import "$rootPath\Regfiles\Sysprep\$path"  
         reg unload "HKU\Default" | Out-Null
     }
     Write-Output ""
 }
 
 function RestartExplorer {
-    if ($global:Params.ContainsKey("Sysprep")) {
+    param (
+        $sysprep,
+        $disableMouseAcceleration
+    )
+    if ($sysprep) {
         return
     }
     Write-Output "> Restarting Windows Explorer process to apply all changes... (This may cause some flickering)"
-    if ($global:Params.ContainsKey("DisableMouseAcceleration")) {
+    if ($disableMouseAcceleration) {
         Write-Host "Warning: The Enhance Pointer Precision setting has been changed, this setting will only take effect after a reboot" -ForegroundColor Yellow
     }
     if ([Environment]::Is64BitProcess -eq [Environment]::Is64BitOperatingSystem) {

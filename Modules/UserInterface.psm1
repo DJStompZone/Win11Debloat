@@ -22,10 +22,10 @@ function ShowAppSelectionForm {
             }
         }
         $global:SelectedApps = $selectionBox.CheckedItems
-        if (!(Test-Path "$PSScriptRoot/CustomAppsList")) {
-            $null = New-Item "$PSScriptRoot/CustomAppsList"
+        if (!(Test-Path "$global:rootPath/CustomAppsList")) {
+            $null = New-Item "$global:rootPath/CustomAppsList"
         } 
-        Set-Content -Path "$PSScriptRoot/CustomAppsList" -Value $global:SelectedApps
+        Set-Content -Path "$global:rootPath/CustomAppsList" -Value $global:SelectedApps
         $form.DialogResult = [System.Windows.Forms.DialogResult]::OK
         $form.Close()
     }
@@ -72,7 +72,7 @@ function ShowAppSelectionForm {
         $loadingLabel.Visible = $true
         $form.Refresh()
         $selectionBox.Items.Clear()
-        $appsFile = "$PSScriptRoot/Appslist.txt"
+        $appsFile = "$global:rootPath/Appslist.txt"
         $listOfApps = ""
         if ($onlyInstalledCheckBox.Checked -and ($global:wingetInstalled -eq $true)) {
             $job = Start-Job { return winget list --accept-source-agreements --disable-interactivity }
